@@ -56,6 +56,15 @@ def regime() -> JSONResponse:
     return JSONResponse(latest_agent_output("regime") or {})
 
 
+@app.get("/api/regime/history")
+def regime_history() -> JSONResponse:
+    from ..storage.db import agent_output_history
+    hist = agent_output_history("regime", limit=90)
+    series = [{"ts": h["ts"], "label": h["payload"].get("label"),
+               "risk_score": h["payload"].get("risk_score")} for h in hist]
+    return JSONResponse({"history": list(reversed(series))})
+
+
 @app.get("/api/flow")
 def flow() -> JSONResponse:
     out = latest_agent_output("flow") or {}
