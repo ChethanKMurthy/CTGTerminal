@@ -249,8 +249,22 @@ def price_features(symbol: str) -> dict | None:
         "mom_3m_pct": round(mom_3m, 2) if mom_3m is not None else None,
         "rsi14": round(rsi, 1) if rsi is not None else None,
         "macd": macd_line, "macd_signal": macd_signal, "macd_hist": macd_hist,
+        **_bollinger(close),
         "dist_from_52w_high_pct": round(dist_52w_high, 1),
     }
+
+
+def _bollinger(close: pd.Series, window: int = 20, k: float = 2.0) -> dict:
+    """Bollinger Bands + %B (position within the bands, 0..1)."""
+    if len(close) < window:
+        return {"bb_upper": None, "bb_lower": None, "bb_pctb": None}
+    ma = close.tail(window).mean()
+    sd = close.tail(window).std()
+    upper, lower = ma + k * sd, ma - k * sd
+    last = float(close.iloc[-1])
+    pctb = (last - lower) / (upper - lower) if upper != lower else None
+    return {"bb_upper": round(float(upper), 2), "bb_lower": round(float(lower), 2),
+            "bb_pctb": round(float(pctb), 2) if pctb is not None else None}
 
 
 def _macd(close: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9):
