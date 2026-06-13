@@ -255,8 +255,20 @@ def price_features(symbol: str) -> dict | None:
         "macd": macd_line, "macd_signal": macd_signal, "macd_hist": macd_hist,
         **_bollinger(close),
         "vwap20": _vwap(close, volume),
+        "atr14": _atr(high, low, close),
         "dist_from_52w_high_pct": round(dist_52w_high, 1),
     }
+
+
+def _atr(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14) -> float | None:
+    """Average True Range — volatility / stop-sizing measure (absolute price)."""
+    if len(close) < period + 1:
+        return None
+    prev_close = close.shift(1)
+    tr = pd.concat([(high - low).abs(),
+                    (high - prev_close).abs(),
+                    (low - prev_close).abs()], axis=1).max(axis=1)
+    return round(float(tr.tail(period).mean()), 2)
 
 
 def _vwap(close: pd.Series, volume: pd.Series, window: int = 20) -> float | None:
