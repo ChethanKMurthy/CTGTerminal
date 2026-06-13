@@ -113,7 +113,9 @@ def graph() -> JSONResponse:
 
 @app.get("/api/portfolio")
 def portfolio() -> JSONResponse:
-    return JSONResponse({"book": mark_to_market(), "equity_curve": equity_curve()})
+    from ..portfolio.paper import drawdown_stats
+    return JSONResponse({"book": mark_to_market(), "equity_curve": equity_curve(),
+                         "drawdown": drawdown_stats()})
 
 
 @app.get("/metrics", response_class=PlainTextResponse)
