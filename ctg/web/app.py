@@ -37,7 +37,9 @@ def health() -> JSONResponse:
             counts[t] = int(duck_df(f"SELECT count(*) c FROM {t}").c.iloc[0])
         except Exception:  # noqa: BLE001
             counts[t] = 0
+    from .. import __version__
     return JSONResponse({
+        "version": __version__,
         "capabilities": s.capability_report(),
         "ingest_heartbeats": heartbeats,
         "row_counts": counts,
