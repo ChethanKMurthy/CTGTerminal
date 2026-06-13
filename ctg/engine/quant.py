@@ -117,6 +117,21 @@ def options_metrics(underlying: str) -> dict | None:
     }
 
 
+def pcr_interpretation(pcr: float | None) -> str:
+    """Human-readable read of a Put-Call Ratio (OI)."""
+    if pcr is None:
+        return "n/a"
+    if pcr >= 1.5:
+        return "Heavily put-heavy — strong support / possible oversold"
+    if pcr >= 1.1:
+        return "Put-heavy — bullish-leaning, writers expect support"
+    if pcr >= 0.9:
+        return "Balanced positioning"
+    if pcr >= 0.6:
+        return "Call-heavy — bearish-leaning, overhead resistance"
+    return "Heavily call-heavy — possible overbought / capped upside"
+
+
 def top_movers(n: int = 5) -> dict:
     """Top gainers/losers across the universe by latest 1-session return."""
     df = duck_df(
