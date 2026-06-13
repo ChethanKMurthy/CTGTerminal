@@ -239,6 +239,7 @@ def price_features(symbol: str) -> dict | None:
     mom_3m = float(close.iloc[-1] / close.iloc[-63] - 1) * 100 if len(close) > 63 else None
     rsi = _rsi(close)
     dist_52w_high = float(last / close.tail(252).max() - 1) * 100
+    macd_line, macd_signal, macd_hist = _macd(close)
     return {
         "symbol": symbol, "last": round(last, 2),
         "above_ma20": last > ma20, "above_ma50": last > ma50, "above_ma200": last > ma200,
@@ -247,8 +248,21 @@ def price_features(symbol: str) -> dict | None:
         "mom_1m_pct": round(mom_1m, 2) if mom_1m is not None else None,
         "mom_3m_pct": round(mom_3m, 2) if mom_3m is not None else None,
         "rsi14": round(rsi, 1) if rsi is not None else None,
+        "macd": macd_line, "macd_signal": macd_signal, "macd_hist": macd_hist,
         "dist_from_52w_high_pct": round(dist_52w_high, 1),
     }
+
+
+def _macd(close: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9):
+    """Moving Average Convergence Divergence (line, signal, histogram)."""
+    if len(close) < slow + signal:
+        return None, None, None
+    ema_fast = close.ewm(span=fast, adjust=False).mean()
+    ema_slow = close.ewm(span=slow, adjust=False).mean()
+    line = ema_fast - ema_slow
+    sig = line.ewm(span=signal, adjust=False).mean()
+    hist = line - sig
+    return round(float(line.iloc[-1]), 2), round(float(sig.iloc[-1]), 2), round(float(hist.iloc[-1]), 2)
 
 
 def _rsi(close: pd.Series, period: int = 14) -> float | None:
