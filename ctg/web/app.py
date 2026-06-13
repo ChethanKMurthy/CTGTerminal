@@ -19,6 +19,15 @@ app = FastAPI(title="CTG — Autonomous Alpha Discovery (India)")
 app.mount("/static", StaticFiles(directory=str(HERE / "static")), name="static")
 
 
+@app.middleware("http")
+async def add_timing_header(request, call_next):
+    import time as _t
+    start = _t.perf_counter()
+    response = await call_next(request)
+    response.headers["X-Process-Time-ms"] = f"{(_t.perf_counter() - start) * 1000:.1f}"
+    return response
+
+
 @app.get("/", response_class=HTMLResponse)
 def index() -> str:
     return (HERE / "templates" / "index.html").read_text(encoding="utf-8")
