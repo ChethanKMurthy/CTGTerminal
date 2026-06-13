@@ -47,6 +47,9 @@ data_sources:
     - https://economictimes.indiatimes.com/news/economy/rssfeeds/1373380680.cms
     - https://www.livemint.com/rss/markets
     - https://www.business-standard.com/rss/markets-106.rss
+    - https://www.thehindubusinessline.com/markets/feeder/default.rss
+    - https://www.financialexpress.com/market/feed/
+    - https://www.moneycontrol.com/rss/results.xml
   reddit_subs:
     - IndianStreetBets
     - IndiaInvestments
