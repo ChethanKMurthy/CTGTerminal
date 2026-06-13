@@ -63,6 +63,10 @@ data_sources:
     DCOILBRENTEU: Brent crude
     VIXCLS: US VIX
     DGS10: US 10Y yield
+    DGS2: US 2Y yield
+    T10Y2Y: US 2s10s spread
+    DTWEXBGS: US Dollar Index (broad)
+    DCOILWTICO: WTI crude
 
 llm:
   # Conservative free-tier budgets (requests per minute) to avoid throttling
