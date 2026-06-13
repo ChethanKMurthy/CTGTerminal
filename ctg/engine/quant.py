@@ -256,8 +256,21 @@ def price_features(symbol: str) -> dict | None:
         **_bollinger(close),
         "vwap20": _vwap(close, volume),
         "atr14": _atr(high, low, close),
+        "stoch_k": _stochastic(high, low, close),
         "dist_from_52w_high_pct": round(dist_52w_high, 1),
     }
+
+
+def _stochastic(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14) -> float | None:
+    """Stochastic oscillator %K (0..100): where close sits in the period range."""
+    if len(close) < period:
+        return None
+    hh = high.tail(period).max()
+    ll = low.tail(period).min()
+    if hh == ll:
+        return None
+    k = (float(close.iloc[-1]) - ll) / (hh - ll) * 100
+    return round(float(k), 1)
 
 
 def _atr(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14) -> float | None:
