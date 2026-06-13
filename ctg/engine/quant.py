@@ -257,8 +257,29 @@ def price_features(symbol: str) -> dict | None:
         "vwap20": _vwap(close, volume),
         "atr14": _atr(high, low, close),
         "stoch_k": _stochastic(high, low, close),
+        "adx14": _adx(high, low, close),
         "dist_from_52w_high_pct": round(dist_52w_high, 1),
     }
+
+
+def _adx(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14) -> float | None:
+    """Average Directional Index — trend strength (0..100; >25 = trending)."""
+    if len(close) < period * 2:
+        return None
+    up = high.diff()
+    down = -low.diff()
+    plus_dm = ((up > down) & (up > 0)) * up
+    minus_dm = ((down > up) & (down > 0)) * down
+    prev_close = close.shift(1)
+    tr = pd.concat([(high - low).abs(), (high - prev_close).abs(),
+                    (low - prev_close).abs()], axis=1).max(axis=1)
+    atr = tr.ewm(alpha=1 / period, adjust=False).mean()
+    plus_di = 100 * plus_dm.ewm(alpha=1 / period, adjust=False).mean() / atr
+    minus_di = 100 * minus_dm.ewm(alpha=1 / period, adjust=False).mean() / atr
+    dx = ((plus_di - minus_di).abs() / (plus_di + minus_di).replace(0, float("nan"))) * 100
+    adx = dx.ewm(alpha=1 / period, adjust=False).mean()
+    val = adx.iloc[-1]
+    return round(float(val), 1) if val == val else None
 
 
 def _stochastic(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14) -> float | None:
