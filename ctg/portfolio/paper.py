@@ -169,3 +169,20 @@ def equity_curve(limit: int = 200) -> list[dict]:
         return [dict(r) for r in reversed(rows)]
     finally:
         con.close()
+
+
+def drawdown_stats() -> dict:
+    """Max drawdown and current drawdown from the recorded equity curve."""
+    curve = equity_curve(limit=10000)
+    if len(curve) < 2:
+        return {"max_drawdown_pct": 0.0, "current_drawdown_pct": 0.0}
+    peak = curve[0]["equity"] or 1.0
+    max_dd = 0.0
+    for p in curve:
+        eq = p["equity"] or peak
+        peak = max(peak, eq)
+        dd = (eq / peak - 1.0) * 100 if peak else 0.0
+        max_dd = min(max_dd, dd)
+    last = curve[-1]["equity"] or peak
+    cur_dd = (last / peak - 1.0) * 100 if peak else 0.0
+    return {"max_drawdown_pct": round(max_dd, 2), "current_drawdown_pct": round(cur_dd, 2)}
