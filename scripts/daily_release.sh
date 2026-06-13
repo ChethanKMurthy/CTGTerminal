@@ -42,7 +42,8 @@ fi
 subj=$(git log -1 --format=%s)
 printf -- "- %s: %s\n" "$(date +%Y-%m-%d)" "$subj" >> docs/CHANGELOG.md
 git add docs/CHANGELOG.md
-git commit -q --amend --no-edit --date=now
+# --reset-author: stamp with the configured (GitHub noreply) author + today's date
+git commit -q --amend --no-edit --reset-author --date=now
 
 git push -q origin main
 echo "$((idx + 1))" > "$PROG"
