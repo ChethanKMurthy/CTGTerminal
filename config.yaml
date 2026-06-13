@@ -54,6 +54,8 @@ data_sources:
     - IndianStreetBets
     - IndiaInvestments
     - DalalStreetTalks
+    - IndianStockMarket
+    - StockMarketIndia
   # FRED India + global macro series (free)
   fred_series:
     INDCPIALLMINMEI: India CPI
