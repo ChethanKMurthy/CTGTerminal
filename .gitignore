@@ -1,0 +1,29 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Secrets — never commit
+.env
+
+# Local data / runtime artifacts
+data_store/*.duckdb
+data_store/*.duckdb.wal
+data_store/*.sqlite
+data_store/*.sqlite-wal
+data_store/*.sqlite-shm
+data_store/*.gpickle
+data_store/knowledge_graph*
+data_store/cache/
+logs/*.log
+
+# Reference material (third-party / copyrighted)
+*.pdf
+*.docx
+_docx_extract/
+
+# Dev / tooling
+docs/_shoot.py
+_pdf_pages/
+.DS_Store

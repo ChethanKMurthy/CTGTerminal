@@ -1,0 +1,39 @@
+# Core data / analytics
+pandas
+numpy
+scipy
+duckdb
+networkx
+
+# HTTP / scraping
+requests
+yfinance
+feedparser
+lxml
+beautifulsoup4
+tenacity
+
+# Web / dashboard
+fastapi
+uvicorn[standard]
+jinja2
+
+# Scheduling
+apscheduler
+
+# Config
+pydantic
+pydantic-settings
+python-dotenv
+pyyaml
+
+# LLM (free tiers)
+google-genai
+groq
+
+# Social
+praw
+
+# Alerts
+python-telegram-bot
+pytz

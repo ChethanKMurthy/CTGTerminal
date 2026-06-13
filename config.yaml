@@ -1,0 +1,80 @@
+# =====================================================================
+# CTG runtime configuration (non-secret). Secrets live in .env
+# =====================================================================
+
+timezone: Asia/Kolkata
+
+market:
+  # NSE regular session (IST)
+  open: "09:15"
+  close: "15:30"
+  # Cron weekdays (Mon-Fri). NSE holidays are fetched live from NSE.
+  weekdays: [0, 1, 2, 3, 4]
+
+universe:
+  # Primary tradable universe. "nifty50" is fetched live from NSE with a
+  # curated fallback baked into ctg/data/universe.py
+  name: nifty50
+  indices:
+    - NIFTY 50
+    - NIFTY BANK
+    - NIFTY FIN SERVICE
+  # Index option chains to track for GEX / PCR / max-pain
+  option_chains:
+    - NIFTY
+    - BANKNIFTY
+
+# How often each job runs. Intraday jobs only fire during market hours.
+cadences:
+  prices_intraday_minutes: 15      # OHLCV snapshot during session
+  option_chain_minutes: 10         # NSE option chain (rate-limit friendly)
+  flows_eod: true                  # FII/DII after close (published ~6pm IST)
+  bulk_block_eod: true             # bulk/block deals after close
+  announcements_minutes: 30        # corporate announcements polling
+  news_minutes: 20                 # RSS news polling
+  social_minutes: 60               # Reddit polling
+  macro_daily_hour: 7              # macro refresh (IST hour)
+  graph_rebuild_hour: 6            # knowledge graph rebuild (IST hour)
+  agents_cycle_minutes: 30         # full agent reasoning cycle (market hours)
+  agents_eod: true                 # heavy EOD agent + CIO cycle
+
+data_sources:
+  news_rss:
+    - https://www.moneycontrol.com/rss/marketreports.xml
+    - https://www.moneycontrol.com/rss/business.xml
+    - https://www.moneycontrol.com/rss/economy.xml
+    - https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms
+    - https://economictimes.indiatimes.com/news/economy/rssfeeds/1373380680.cms
+    - https://www.livemint.com/rss/markets
+    - https://www.business-standard.com/rss/markets-106.rss
+  reddit_subs:
+    - IndianStreetBets
+    - IndiaInvestments
+    - DalalStreetTalks
+  # FRED India + global macro series (free)
+  fred_series:
+    INDCPIALLMINMEI: India CPI
+    INTDSRINM193N: India policy rate
+    INDPROINDMISMEI: India industrial production
+    DEXINUS: USD/INR
+    DCOILBRENTEU: Brent crude
+    VIXCLS: US VIX
+    DGS10: US 10Y yield
+
+llm:
+  # Conservative free-tier budgets (requests per minute) to avoid throttling
+  gemini_rpm: 14
+  groq_rpm: 28
+  cache_ttl_hours: 12
+  default_model_gemini: gemini-2.0-flash
+  default_model_groq: llama-3.3-70b-versatile
+
+risk:
+  paper_starting_capital: 1000000   # virtual INR for paper book
+  max_position_pct: 0.10            # max 10% of book per name
+  max_gross_exposure: 1.0
+
+alerts:
+  min_conviction_for_alert: 70      # 0-100
+  regime_change_alert: true
+  unusual_flow_alert: true
