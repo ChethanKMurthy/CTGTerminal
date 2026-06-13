@@ -117,6 +117,25 @@ def options_metrics(underlying: str) -> dict | None:
     }
 
 
+def top_movers(n: int = 5) -> dict:
+    """Top gainers/losers across the universe by latest 1-session return."""
+    df = duck_df(
+        "SELECT symbol, ts, close FROM prices WHERE interval='1d' ORDER BY symbol, ts"
+    )
+    if df.empty:
+        return {"gainers": [], "losers": []}
+    rows = []
+    for sym, g in df.groupby("symbol"):
+        c = g["close"].astype(float)
+        if len(c) < 2 or c.iloc[-2] == 0:
+            continue
+        ret = (c.iloc[-1] / c.iloc[-2] - 1) * 100
+        rows.append({"symbol": sym, "ret_pct": round(float(ret), 2),
+                     "last": round(float(c.iloc[-1]), 2)})
+    rows.sort(key=lambda r: r["ret_pct"], reverse=True)
+    return {"gainers": rows[:n], "losers": rows[-n:][::-1]}
+
+
 def oi_change_summary(underlying: str) -> dict | None:
     """Classify the day's option OI build-up from CE/PE change-in-OI.
 
