@@ -1,0 +1,12 @@
+services:
+  ctg:
+    build: .
+    container_name: ctg-terminal
+    ports:
+      - "8799:8799"
+    env_file:
+      - .env
+    volumes:
+      - ./data_store:/app/data_store
+      - ./logs:/app/logs
+    restart: unless-stopped
