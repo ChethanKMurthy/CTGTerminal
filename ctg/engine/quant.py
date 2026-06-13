@@ -116,6 +116,34 @@ def options_metrics(underlying: str) -> dict | None:
     }
 
 
+def oi_change_summary(underlying: str) -> dict | None:
+    """Classify the day's option OI build-up from CE/PE change-in-OI.
+
+    Put writing (PE OI up) is supportive/bullish; call writing (CE OI up) is
+    resistive/bearish. The dominant flow gives a quick positioning read.
+    """
+    snap = duck_df(
+        "SELECT ce_chg_oi, pe_chg_oi FROM option_chain WHERE underlying=? AND ts=("
+        "SELECT max(ts) FROM option_chain WHERE underlying=?)",
+        [underlying, underlying],
+    )
+    if snap.empty:
+        return None
+    ce = int(snap["ce_chg_oi"].sum())
+    pe = int(snap["pe_chg_oi"].sum())
+    if pe > 0 and ce < 0:
+        verdict = "Put writing + call unwinding — bullish"
+    elif ce > 0 and pe < 0:
+        verdict = "Call writing + put unwinding — bearish"
+    elif pe > ce:
+        verdict = "Net put writing — supportive"
+    elif ce > pe:
+        verdict = "Net call writing — capped upside"
+    else:
+        verdict = "Balanced OI change"
+    return {"underlying": underlying, "ce_chg_oi": ce, "pe_chg_oi": pe, "verdict": verdict}
+
+
 # ---------------------------------------------------------------------
 # Institutional flow analytics
 # ---------------------------------------------------------------------
