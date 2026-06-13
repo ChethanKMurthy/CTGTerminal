@@ -105,6 +105,7 @@ def options_metrics(underlying: str) -> dict | None:
         "spot": round(spot, 2),
         "pcr_oi": pcr,
         "max_pain": max_pain,
+        "max_pain_dist_pct": round((spot / max_pain - 1) * 100, 2) if max_pain else None,
         "support_oi_strike": support,
         "resistance_oi_strike": resistance,
         "gex": round(gex_notional, 2),
