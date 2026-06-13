@@ -224,11 +224,15 @@ def deal_pressure(symbols: set[str] | None = None, days: int = 5) -> list[dict]:
 # ---------------------------------------------------------------------
 def price_features(symbol: str) -> dict | None:
     df = duck_df(
-        "SELECT ts, close FROM prices WHERE symbol=? AND interval='1d' ORDER BY ts", [symbol]
+        "SELECT ts, high, low, close, volume FROM prices WHERE symbol=? AND interval='1d' "
+        "ORDER BY ts", [symbol]
     )
     if df.empty or len(df) < 30:
         return None
     close = df["close"].astype(float)
+    high = df["high"].astype(float)
+    low = df["low"].astype(float)
+    volume = df["volume"].astype(float)
     rets = close.pct_change().dropna()
     last = float(close.iloc[-1])
     ma20 = float(close.tail(20).mean())
@@ -250,8 +254,20 @@ def price_features(symbol: str) -> dict | None:
         "rsi14": round(rsi, 1) if rsi is not None else None,
         "macd": macd_line, "macd_signal": macd_signal, "macd_hist": macd_hist,
         **_bollinger(close),
+        "vwap20": _vwap(close, volume),
         "dist_from_52w_high_pct": round(dist_52w_high, 1),
     }
+
+
+def _vwap(close: pd.Series, volume: pd.Series, window: int = 20) -> float | None:
+    """Rolling volume-weighted average price over the last `window` sessions."""
+    if len(close) < window:
+        return None
+    c, v = close.tail(window), volume.tail(window)
+    denom = float(v.sum())
+    if denom <= 0:
+        return None
+    return round(float((c * v).sum() / denom), 2)
 
 
 def _bollinger(close: pd.Series, window: int = 20, k: float = 2.0) -> dict:
