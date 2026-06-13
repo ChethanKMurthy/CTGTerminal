@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from ..config import get_settings
@@ -85,6 +85,29 @@ def graph() -> JSONResponse:
 @app.get("/api/portfolio")
 def portfolio() -> JSONResponse:
     return JSONResponse({"book": mark_to_market(), "equity_curve": equity_curve()})
+
+
+@app.get("/metrics", response_class=PlainTextResponse)
+def metrics() -> str:
+    """Prometheus-style exposition of key system gauges."""
+    lines = []
+
+    def g(name, val, help_):
+        lines.append(f"# HELP {name} {help_}\n# TYPE {name} gauge\n{name} {val}")
+
+    try:
+        for t in ("prices", "option_chain", "fii_dii", "news"):
+            n = int(duck_df(f"SELECT count(*) c FROM {t}").c.iloc[0])
+            g(f"ctg_rows_{t}", n, f"row count for {t}")
+    except Exception:  # noqa: BLE001
+        pass
+    g("ctg_open_signals", len(open_signals()), "number of open signals")
+    regime = latest_agent_output("regime") or {}
+    g("ctg_regime_risk_score", regime.get("risk_score", 0) or 0, "regime risk score 0-100")
+    book = mark_to_market()
+    g("ctg_paper_equity_inr", book.get("equity", 0), "paper book equity (INR)")
+    g("ctg_paper_return_pct", book.get("total_return_pct", 0), "paper book total return %")
+    return "\n".join(lines) + "\n"
 
 
 @app.get("/api/option_trades")
