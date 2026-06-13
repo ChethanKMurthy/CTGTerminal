@@ -78,6 +78,18 @@ def indicators(symbol: str) -> JSONResponse:
     return JSONResponse(price_features(symbol.upper()) or {"error": "no data"})
 
 
+@app.get("/api/movers")
+def movers() -> JSONResponse:
+    from ..engine.quant import top_movers
+    return JSONResponse(top_movers())
+
+
+@app.get("/api/sectors")
+def sectors() -> JSONResponse:
+    from ..engine.quant import sector_performance
+    return JSONResponse({"sectors": sector_performance()})
+
+
 @app.get("/api/agents")
 def agents() -> JSONResponse:
     names = ["flow", "options", "macro", "sentiment", "earnings", "valuation",
