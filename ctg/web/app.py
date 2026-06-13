@@ -35,6 +35,21 @@ def index() -> str:
     return (HERE / "templates" / "index.html").read_text(encoding="utf-8")
 
 
+@app.get("/api/status")
+def status() -> JSONResponse:
+    """Fast liveness probe — version, uptime and a one-line market read."""
+    from .. import __version__
+    regime = latest_agent_output("regime") or {}
+    return JSONResponse({
+        "ok": True,
+        "version": __version__,
+        "uptime_seconds": round(_time.time() - _START_TS, 1),
+        "regime": regime.get("label"),
+        "risk_score": regime.get("risk_score"),
+        "open_signals": len(open_signals()),
+    })
+
+
 @app.get("/api/health")
 def health() -> JSONResponse:
     s = get_settings()
