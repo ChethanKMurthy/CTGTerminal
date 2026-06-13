@@ -10,6 +10,7 @@
 
 <br/><br/>
 
+[![CI](https://github.com/ChethanKMurthy/CTGTerminal/actions/workflows/ci.yml/badge.svg)](https://github.com/ChethanKMurthy/CTGTerminal/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![DuckDB](https://img.shields.io/badge/DuckDB-OLAP-FFF000?style=flat-square&logo=duckdb&logoColor=black)
@@ -216,6 +217,9 @@ Signals don't become positions blindly. The risk engine vol-targets each name (s
 
 ## ⚠️ Disclaimer
 Research & educational project. **Not investment advice.** All trading is simulated (paper). Free market data is delayed; option premiums are indicative, not executable quotes. Options and futures carry high, sometimes unlimited, risk.
+
+## 📚 Docs
+[Architecture](docs/ARCHITECTURE.md) · [Data Sources](docs/DATA_SOURCES.md) · [Roadmap](ROADMAP.md) · [Changelog](docs/CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 ## 📄 License
 MIT — see [LICENSE](LICENSE).
