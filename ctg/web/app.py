@@ -14,7 +14,9 @@ from ..portfolio.paper import equity_curve, mark_to_market
 from ..storage.db import duck_df, kv_get, latest_agent_output
 from ..storage.graph_store import graph_to_dict, load_graph
 
+import time as _time
 HERE = Path(__file__).resolve().parent
+_START_TS = _time.time()
 app = FastAPI(title="CTG — Autonomous Alpha Discovery (India)")
 app.mount("/static", StaticFiles(directory=str(HERE / "static")), name="static")
 
@@ -164,6 +166,7 @@ def metrics() -> str:
     book = mark_to_market()
     g("ctg_paper_equity_inr", book.get("equity", 0), "paper book equity (INR)")
     g("ctg_paper_return_pct", book.get("total_return_pct", 0), "paper book total return %")
+    g("ctg_uptime_seconds", round(_time.time() - _START_TS, 1), "process uptime in seconds")
     return "\n".join(lines) + "\n"
 
 
