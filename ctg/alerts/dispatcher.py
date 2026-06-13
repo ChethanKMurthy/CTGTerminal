@@ -126,8 +126,10 @@ def alert_regime_change(new_regime: dict, prev_label: str | None) -> None:
         dispatch("regime", "🌐 Regime change", msg, f"regime:{label}:{today}")
 
 
-def alert_option_trades(trades_by_underlying: dict, min_fit: float = 68.0) -> None:
+def alert_option_trades(trades_by_underlying: dict, min_fit: float | None = None) -> None:
     """Push the single best option setup per index when it clears a fit bar."""
+    if min_fit is None:
+        min_fit = float(get_settings().get("alerts", "option_trade_min_fit", default=68))
     today = datetime.now().strftime("%Y-%m-%d")
     for u, data in (trades_by_underlying or {}).items():
         if not data.get("available"):

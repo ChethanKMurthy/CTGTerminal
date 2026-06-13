@@ -87,3 +87,4 @@ alerts:
   min_conviction_for_alert: 70      # 0-100
   regime_change_alert: true
   unusual_flow_alert: true
+  option_trade_min_fit: 68          # min fit-score to alert an option setup
