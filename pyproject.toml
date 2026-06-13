@@ -1,0 +1,19 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "docs", "data_store"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "E501",   # line length handled by formatter
+    "B008",   # FastAPI uses callables in defaults
+    "E741",   # ambiguous var names (l for leg) are fine here
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["F401"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
