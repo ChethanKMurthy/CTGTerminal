@@ -96,6 +96,11 @@ def indicators(symbol: str) -> JSONResponse:
     return JSONResponse(price_features(symbol.upper()) or {"error": "no data"})
 
 
+@app.get("/api/sentiment")
+def sentiment() -> JSONResponse:
+    return JSONResponse(latest_agent_output("sentiment") or {})
+
+
 @app.get("/api/digest")
 def digest() -> JSONResponse:
     from ..engine.digest import daily_digest
