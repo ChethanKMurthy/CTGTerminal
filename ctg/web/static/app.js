@@ -4,6 +4,13 @@ const cls = (n) => n > 0 ? "pos" : (n < 0 ? "neg" : "dim");
 const sgn = (n, d = 2) => (n > 0 ? "+" : "") + fmt(n, d);
 async function api(p) { try { const r = await fetch(p); return await r.json(); } catch (e) { return null; } }
 
+// --- theme toggle (persisted) ---
+function toggleTheme() {
+  const light = document.body.classList.toggle("light");
+  localStorage.setItem("ctg-theme", light ? "light" : "dark");
+}
+if (localStorage.getItem("ctg-theme") === "light") document.body.classList.add("light");
+
 // --- tabs ---
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#tabs button").forEach(x => x.classList.remove("active"));

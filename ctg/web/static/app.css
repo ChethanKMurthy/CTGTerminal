@@ -3,6 +3,13 @@
   --txt:#d7e0ee; --dim:#7d8aa0; --accent:#ffb000; --green:#1ec98b; --red:#ff5c6c;
   --blue:#4aa8ff; --mono:"SF Mono",ui-monospace,"Roboto Mono",Menlo,monospace;
 }
+body.light{
+  --bg:#f4f6fb; --panel:#ffffff; --panel2:#eef1f7; --line:#dde3ee;
+  --txt:#1a2230; --dim:#5a6678; --accent:#b8780a;
+}
+#theme-toggle{background:none;border:1px solid var(--line);color:var(--dim);
+  border-radius:4px;padding:3px 9px;cursor:pointer;font-family:var(--mono);font-size:11px}
+#theme-toggle:hover{color:var(--txt)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--txt);
   font-family:var(--mono);font-size:13px;line-height:1.45}
