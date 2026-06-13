@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CTG · Autonomous Alpha Discovery · India</title>
+<script src="https://unpkg.com/vis-network@9.1.6/standalone/umd/vis-network.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">◆</span>
+    <div>
+      <h1>CTG <small>Autonomous Alpha Discovery · India</small></h1>
+      <div id="regime-bar" class="regime">loading regime…</div>
+    </div>
+  </div>
+  <div id="caps" class="caps"></div>
+</header>
+
+<nav id="tabs">
+  <button data-tab="signals" class="active">Signals</button>
+  <button data-tab="flow">Flow Intelligence</button>
+  <button data-tab="options">Options</button>
+  <button data-tab="optrades">Option Trades</button>
+  <button data-tab="portfolio">Paper Book</button>
+  <button data-tab="risk">Risk</button>
+  <button data-tab="evals">Evals</button>
+  <button data-tab="graph">Knowledge Graph</button>
+  <button data-tab="news">News</button>
+  <button data-tab="health">System</button>
+</nav>
+
+<main>
+  <section id="signals" class="tab active">
+    <h2>Ranked Mispricings <span class="hint">CIO conviction · expected return · scenarios</span></h2>
+    <div id="signals-body" class="cards"></div>
+  </section>
+
+  <section id="flow" class="tab">
+    <h2>Institutional Flow Intelligence</h2>
+    <div id="flow-body" class="grid2"></div>
+  </section>
+
+  <section id="options" class="tab">
+    <h2>Index Options Positioning</h2>
+    <div id="options-body" class="grid2"></div>
+  </section>
+
+  <section id="optrades" class="tab">
+    <h2>Live Option Trade Ideas <span class="hint">NIFTY / BANKNIFTY · real strikes &amp; premiums · research only</span></h2>
+    <div id="optrades-body"></div>
+  </section>
+
+  <section id="portfolio" class="tab">
+    <h2>Paper Portfolio</h2>
+    <div id="pf-summary" class="kpis"></div>
+    <canvas id="equityChart" height="90"></canvas>
+    <div id="pf-holdings"></div>
+  </section>
+
+  <section id="risk" class="tab">
+    <h2>Portfolio Risk <span class="hint">VaR · stress tests · concentration (Dimon discipline)</span></h2>
+    <div id="risk-body" class="grid2"></div>
+  </section>
+
+  <section id="evals" class="tab">
+    <h2>Learning &amp; Accuracy <span class="hint">forward-return IC · hit-rate · adaptive factor weights (Karpathy loop)</span></h2>
+    <div id="evals-body" class="grid2"></div>
+  </section>
+
+  <section id="graph" class="tab">
+    <h2>Market Knowledge Graph <span class="hint">stocks · sectors · macro · correlations</span></h2>
+    <div id="graph-canvas"></div>
+  </section>
+
+  <section id="news" class="tab">
+    <h2>Live News</h2>
+    <div id="news-body"></div>
+  </section>
+
+  <section id="health" class="tab">
+    <h2>System Health</h2>
+    <div id="health-body"></div>
+  </section>
+</main>
+
+<footer>Free data · NSE · yfinance · FRED · RSS · Reddit — runs 24/7 locally. Signals are research, not investment advice.</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>
