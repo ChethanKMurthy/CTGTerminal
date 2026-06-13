@@ -136,6 +136,26 @@ def top_movers(n: int = 5) -> dict:
     return {"gainers": rows[:n], "losers": rows[-n:][::-1]}
 
 
+def sector_performance() -> list[dict]:
+    """Average latest 1-session return grouped by sector (for a heatmap)."""
+    from ..data.universe import load_universe
+    u = load_universe()
+    df = duck_df("SELECT symbol, ts, close FROM prices WHERE interval='1d' ORDER BY symbol, ts")
+    if df.empty:
+        return []
+    by_sector: dict[str, list[float]] = {}
+    for sym, g in df.groupby("symbol"):
+        c = g["close"].astype(float)
+        if len(c) < 2 or c.iloc[-2] == 0:
+            continue
+        ret = (c.iloc[-1] / c.iloc[-2] - 1) * 100
+        by_sector.setdefault(u.sector(sym), []).append(float(ret))
+    out = [{"sector": s, "avg_ret_pct": round(sum(v) / len(v), 2), "n": len(v)}
+           for s, v in by_sector.items() if v]
+    out.sort(key=lambda r: r["avg_ret_pct"], reverse=True)
+    return out
+
+
 def oi_change_summary(underlying: str) -> dict | None:
     """Classify the day's option OI build-up from CE/PE change-in-OI.
 
