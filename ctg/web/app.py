@@ -87,6 +87,12 @@ def indicators(symbol: str) -> JSONResponse:
     return JSONResponse(price_features(symbol.upper()) or {"error": "no data"})
 
 
+@app.get("/api/oi")
+def oi() -> JSONResponse:
+    from ..engine.quant import oi_change_summary
+    return JSONResponse({u: oi_change_summary(u) for u in ("NIFTY", "BANKNIFTY")})
+
+
 @app.get("/api/movers")
 def movers() -> JSONResponse:
     from ..engine.quant import top_movers
