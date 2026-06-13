@@ -368,6 +368,43 @@ def _macd(close: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9):
     return round(float(line.iloc[-1]), 2), round(float(sig.iloc[-1]), 2), round(float(hist.iloc[-1]), 2)
 
 
+INDEX_YAHOO = {"NIFTY": "^NSEI", "BANKNIFTY": "^NSEBANK", "FINNIFTY": "^CNXFIN"}
+
+
+def pivot_levels(underlying: str) -> dict | None:
+    """Classic pivot points + Central Pivot Range (CPR) for an index.
+
+    Uses the last completed daily bar (free, via yfinance index tickers).
+    """
+    import yfinance as yf
+
+    yt = INDEX_YAHOO.get(underlying)
+    if not yt:
+        return None
+    try:
+        data = yf.download(yt, period="7d", interval="1d", progress=False, auto_adjust=False)
+    except Exception:  # noqa: BLE001
+        return None
+    if data is None or data.empty:
+        return None
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = data.columns.droplevel(1)  # single-ticker -> flat columns
+    row = data.dropna().iloc[-1]
+    h, l, c = float(row["High"]), float(row["Low"]), float(row["Close"])
+    p = (h + l + c) / 3
+    bc = (h + l) / 2
+    tc = 2 * p - bc
+    rng = h - l
+    return {
+        "underlying": underlying,
+        "pivot": round(p, 1),
+        "r1": round(2 * p - l, 1), "r2": round(p + rng, 1), "r3": round(h + 2 * (p - l), 1),
+        "s1": round(2 * p - h, 1), "s2": round(p - rng, 1), "s3": round(l - 2 * (h - p), 1),
+        "cpr_top": round(max(tc, bc), 1), "cpr_bottom": round(min(tc, bc), 1),
+        "cpr_width_pct": round(abs(tc - bc) / c * 100, 3),
+    }
+
+
 def _rsi(close: pd.Series, period: int = 14) -> float | None:
     if len(close) < period + 1:
         return None
