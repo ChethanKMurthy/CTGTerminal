@@ -27,3 +27,6 @@ _docx_extract/
 docs/_shoot.py
 _pdf_pages/
 .DS_Store
+
+# daily-release progress pointer (local state)
+.release_progress
