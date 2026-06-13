@@ -258,8 +258,35 @@ def price_features(symbol: str) -> dict | None:
         "atr14": _atr(high, low, close),
         "stoch_k": _stochastic(high, low, close),
         "adx14": _adx(high, low, close),
+        **_supertrend(high, low, close),
         "dist_from_52w_high_pct": round(dist_52w_high, 1),
     }
+
+
+def _supertrend(high: pd.Series, low: pd.Series, close: pd.Series,
+                period: int = 10, mult: float = 3.0) -> dict:
+    """Supertrend value + direction (bullish/bearish) from ATR bands."""
+    n = len(close)
+    if n < period + 1:
+        return {"supertrend": None, "supertrend_dir": None}
+    prev_close = close.shift(1)
+    tr = pd.concat([(high - low).abs(), (high - prev_close).abs(),
+                    (low - prev_close).abs()], axis=1).max(axis=1)
+    atr = tr.ewm(alpha=1 / period, adjust=False).mean()
+    hl2 = (high + low) / 2
+    upper = (hl2 + mult * atr).to_numpy()
+    lower = (hl2 - mult * atr).to_numpy()
+    c = close.to_numpy()
+    st = [0.0] * n
+    dir_up = True
+    for i in range(1, n):
+        if c[i] > upper[i - 1]:
+            dir_up = True
+        elif c[i] < lower[i - 1]:
+            dir_up = False
+        st[i] = lower[i] if dir_up else upper[i]
+    return {"supertrend": round(float(st[-1]), 2),
+            "supertrend_dir": "bullish" if dir_up else "bearish"}
 
 
 def _adx(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14) -> float | None:
