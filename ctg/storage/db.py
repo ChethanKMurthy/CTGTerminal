@@ -244,6 +244,25 @@ def latest_agent_output(agent: str) -> dict | None:
         con.close()
 
 
+def agent_output_history(agent: str, limit: int = 60) -> list[dict]:
+    """Recent outputs for an agent (newest first) as {ts, payload} records."""
+    con = sqlite()
+    try:
+        rows = con.execute(
+            "SELECT ts, payload FROM agent_output WHERE agent=? ORDER BY ts DESC LIMIT ?",
+            (agent, limit),
+        ).fetchall()
+        out = []
+        for r in rows:
+            try:
+                out.append({"ts": r["ts"], "payload": json.loads(r["payload"])})
+            except Exception:  # noqa: BLE001
+                continue
+        return out
+    finally:
+        con.close()
+
+
 def init_all() -> None:
     duck()  # triggers _init_duck
     init_sqlite()
