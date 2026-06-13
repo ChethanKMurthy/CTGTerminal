@@ -72,6 +72,12 @@ def options() -> JSONResponse:
     })
 
 
+@app.get("/api/indicators/{symbol}")
+def indicators(symbol: str) -> JSONResponse:
+    from ..engine.quant import price_features
+    return JSONResponse(price_features(symbol.upper()) or {"error": "no data"})
+
+
 @app.get("/api/agents")
 def agents() -> JSONResponse:
     names = ["flow", "options", "macro", "sentiment", "earnings", "valuation",
