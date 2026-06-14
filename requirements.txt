@@ -37,3 +37,4 @@ praw
 # Alerts
 python-telegram-bot
 pytz
+pytest
