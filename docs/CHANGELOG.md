@@ -5,3 +5,4 @@ current-dated commit.
 
 - 2026-06-13: docs: add 50-item project roadmap
 - 2026-06-14: test: add unit tests for quant analytics (Greeks, RSI, streak)
+- 2026-06-15: test: add options payoff engine tests (max P/L, breakevens, spreads)
