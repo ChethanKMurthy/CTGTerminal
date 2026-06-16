@@ -78,11 +78,8 @@ def target_weights(signals: list[dict], equity: float, regime: dict,
             "notes": notes}
 
 
-def _degross_factor(equity: float) -> float:
-    peak = kv_get("paper_equity_peak", equity) or equity
-    peak = max(peak, equity)
-    kv_set("paper_equity_peak", peak)
-    dd = (equity / peak - 1.0) if peak else 0.0  # <=0
+def degross_for_drawdown(dd: float) -> float:
+    """Pure mapping from drawdown (<=0) to a gross-exposure multiplier."""
     if dd <= -0.15:
         return 0.5
     if dd <= -0.10:
@@ -90,6 +87,14 @@ def _degross_factor(equity: float) -> float:
     if dd <= -0.05:
         return 0.85
     return 1.0
+
+
+def _degross_factor(equity: float) -> float:
+    peak = kv_get("paper_equity_peak", equity) or equity
+    peak = max(peak, equity)
+    kv_set("paper_equity_peak", peak)
+    dd = (equity / peak - 1.0) if peak else 0.0  # <=0
+    return degross_for_drawdown(dd)
 
 
 # ---------------------------------------------------------------------
